@@ -1,0 +1,31 @@
+{% extends "base_form.html" %}
+
+{% block title %}
+add restaurant
+{% endblock title %}
+{% block style %}
+<style>
+    .timepicker {
+        font-size: 1rem;
+        padding: 0.5rem;
+        border: 1px solid #d35400; /* Match your theme color */
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .timepicker:focus {
+        border-color: #fc7a1e;
+        box-shadow: 0 0 10px rgba(252, 122, 30, 0.4); /* Smooth glowing effect */
+    }
+</style>
+
+{% endblock style %}
+{% block heading %}
+Add Restaurant
+{% endblock heading %}
+
+{% block submit %}
+    <input type="submit" class="btn btn-success w-100 btn-custom" value="Add">
+
+{% endblock submit %}

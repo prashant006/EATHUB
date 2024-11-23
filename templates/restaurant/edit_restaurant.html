@@ -1,0 +1,21 @@
+{% extends "base_form.html" %}
+
+{% block title %}
+    Edit Restaurabt Detail
+{% endblock title %}
+
+{% block heading %}
+    Edit Restaurabt Detail
+{% endblock heading %}
+
+{% block submit %}
+    <input type="submit" class="btn btn-success w-100 btn-custom" value="update">
+{% endblock submit %}
+
+{% block urls %}
+    <div class="text-center" style="margin-top: 1.5rem;">
+        <a href="{% url 'restaurant_home' %}" class="login-link">Back to Restaurent Dashboard</a>
+    </div>
+{% endblock urls %}
+
+

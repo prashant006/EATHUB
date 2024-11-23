@@ -1,0 +1,53 @@
+{% extends "base_home.html" %}
+
+{% block title %}
+restaurants
+{% endblock title %}
+
+{% block navbar_item %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'add_restaurant' %}">Add restaurants</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="{% url 'add_restaurant' %}">Add Edit profile</a></li>
+                
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                
+            </ul>
+        </div>
+
+{% endblock navbar_item %}
+
+{% block content %}
+
+    <h2>restaurant home page</h2>
+
+    <h2>edit profile</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning" style="font-size: 1rem; margin-top: 1rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+        {{field.label_tag}} <br>
+        {{field}} <br>
+        <div class="text-danger" style="font-size: 0.875rem; margin-top: 0.25rem;">
+            {{ field.errors|striptags }}
+        </div>    
+    </div>
+    {% endfor %}
+    <input type="submit" value="save">
+    </form>
+
+{% endblock content %}
+
+

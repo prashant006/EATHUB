@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fc7a1e;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container h2 {
+            color: #d35400;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .form-control {
+            border-color: #d35400;
+        }
+
+        .form-control:focus {
+            border-color: #d35400 !important;
+            box-shadow: 0 0 8px rgba(211, 84, 0, 0.5);
+        }
+
+        .form-control[name="address"] {
+            height: 3.5rem;
+        }
+
+        .text-danger {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-custom {
+            background-color: #d35400;
+            border-color: #d35400;
+            border-radius: 10px;
+        }
+
+        .login-link {
+            font-size: 0.9rem;
+            color: #d35400;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .container {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="form-container">
+                    <h2>Create Your Account</h2>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-warning" style="font-size: 1rem; text-align: center;">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% load widget_tweaks %}
+
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                {{ field|add_class:"form-control" }}
+                                <div class="text-danger">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <input type="submit" class="btn btn-success w-100 btn-custom" value="Sign Up">
+                    </form>
+
+                    <div class="text-center" style="margin-top: 1.5rem;">
+                        <a href="{% url 'login' %}" class="login-link">Already have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

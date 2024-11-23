@@ -1,0 +1,21 @@
+{% extends "base_form.html" %}
+
+{% block title %}
+    SignUp
+{% endblock title %}
+
+{% block heading %}
+    SignUp
+{% endblock heading %}
+
+{% block submit %}
+    <input type="submit" class="btn btn-success w-100 btn-custom" value="SignUp">
+{% endblock submit %}
+
+{% block urls %}
+    <div class="text-center" style="margin-top: 1.5rem;">
+        <a href="{% url 'login' %}" class="login-link">Already have an account? Login</a>
+    </div>
+{% endblock urls %}
+
+

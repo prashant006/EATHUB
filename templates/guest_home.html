@@ -1,0 +1,172 @@
+{% extends "base_home.html" %}
+
+{% block title %}
+home
+{% endblock title %}
+
+{% block style %}
+
+<style>
+    .container {
+        margin-top: 2rem;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-img-container {
+        height: 180px;
+        overflow: hidden;
+    }
+
+    .card-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 0.8rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body .time-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #555;
+        margin-top: 0.3rem;
+    }
+
+    .card-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #ff6f00;
+        margin-bottom: 0;
+    }
+
+    .card-rating {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .card-body .cuisine-type {
+        font-size: 1 rem;
+        font-weight: bold;
+        color: #777;
+        margin-top: 0.5rem;
+    }
+
+    .card-body .location {
+        font-size: 1 rem;
+        font-weight: bold;
+        color: #555;
+        margin-top: 0.5rem;
+    }
+
+   
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+</style>
+
+{% endblock style %}
+
+{% block navbar_item %}
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'restaurant_signup' %}">Add restaurants</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'customer_signup' %}">Sign Up</a></li>
+                
+            </ul>
+        </div> 
+
+{% endblock navbar_item %}
+
+{% block content %}
+
+
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning" style="font-size: 1rem; margin-top: 1rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+
+
+
+
+
+<div class="container">
+    <h1 style="text-align: center; color: #ff6f00; margin-bottom: 2rem;">Explore Restaurants</h1>
+    <div class="row">
+        {% for restaurant in restaurants %}
+        <div class="col-md-4">
+            <a href="{% url 'restaurant_detail' restaurant.id %}" >
+                <div class="card mb-4">
+                    <div class="card-img-container">
+                        {% if restaurant.restaurant_img %}
+                            <img src="{{ restaurant.restaurant_img.url }}" alt="{{ restaurant.name }}">
+                        {% else %}
+                            <img src="" alt="No Image">
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="card-title-row">
+                            <h5 class="card-title">{{ restaurant.name }}</h5>
+                            <span class="card-rating">⭐ {{ restaurant.avg_rating }}/5</span>
+                        </div>
+                        <div class="cuisine-type">{{ restaurant.cuisine_type }}</div>
+                        <div class="time-info">
+                            <span><strong>Open:</strong> {{ restaurant.open_at }}</span>
+                            <span><strong>Close:</strong> {{ restaurant.close_at }}</span>
+                        </div>
+                        
+                        <p class="location">{{ restaurant.location }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+
+
+
+
+
+
+
+

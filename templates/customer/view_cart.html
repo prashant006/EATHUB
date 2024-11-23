@@ -1,0 +1,206 @@
+{% extends "base_home.html" %}
+
+{% block title %}
+Cart
+{% endblock title %}
+
+{% block style %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+    }
+
+    .cart-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-header {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .cart-item img {
+        width: 80px;
+        height: 80px;
+        border-radius: 5px;
+        object-fit: cover;
+        margin-right: 20px;
+    }
+
+    .item-name-price {
+        flex: 2;
+    }
+
+    .item-name-price h4 {
+        margin: 0;
+        font-size: 17px;
+        color: #333;
+    }
+
+    .item-name-price p {
+        margin: 5px 0 0;
+        color: #555;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .item-quantity {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+    }
+
+    .item-quantity button {
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .item-quantity button:hover {
+        background-color: #e64a19;
+    }
+
+    .item-quantity span {
+        margin: 0 10px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .quantity-price {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        margin-right: 80px; 
+    }
+
+    .remove-btn {
+        margin-right: 20px;
+        color: red;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .remove-btn:hover {
+        text-decoration: none;
+        color: #333;
+    }
+
+    .item-total {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .total-section {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .total-section h3 {
+        font-size: 20px;
+        color: #333;
+    }
+
+    .place-order {
+        display: inline-block;
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .place-order:hover {
+        background-color: #218838;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock style %}
+
+{% block navbar_item %}
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'customer_home'%}">Restaurants</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+</div>
+{% endblock navbar_item %}
+
+{% block content %}
+<div class="cart-container">
+    <h1 class="cart-header">Hey {{ cart.customer }}, complete your order and enjoy your meal!</h1>
+    {% if cart_items %}
+        {% for item in cart_items %}
+        <div class="cart-item">
+
+            <img src="{{ item.dish.dish_image.url }}" alt="{{ item.dish.dish_name }}">
+
+            <div class="item-name-price">
+                <h4>{{ item.dish.dish_name }}</h4>
+                <p>₹{{ item.dish.price }}</p>
+            </div>
+
+            <div class="quantity-price">
+                ₹{{ item.dish.price }} x {{ item.quantity }}
+            </div>
+
+            <div class="item-quantity">
+                <a href="{% url 'decrese_item_quantity' item.id %}">
+                    <button>-</button>
+                </a>
+                <span>{{ item.quantity }}</span>
+                <a href="{% url 'increse_item_quantity' item.id %}">
+                    <button>+</button>
+                </a>
+            </div>
+
+            <a href="{% url 'remove_cart_item' item.id %}" class="remove-btn">Remove</a>
+
+            <div class="item-total">
+                ₹{{ item.price }}
+            </div>
+        </div>
+        {% endfor %}
+        <p><a href="{% url 'customer_home' %}" >Add more dish</a></p>
+
+
+        <div class="total-section">
+            <h3>Total Price: ₹{{ cart.total_price }}</h3>
+            <a href="" class="place-order">Place Order</a>
+        </div>
+    {% else %}
+        <p>Your cart is empty. <a href="{% url 'customer_home' %}" style="color: #007bff;">Browse Menu</a></p>
+    {% endif %}
+</div>
+{% endblock content %}

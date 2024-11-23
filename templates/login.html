@@ -1,0 +1,22 @@
+{% extends "base_form.html" %}
+
+{% block title %}
+Login
+{% endblock title %}
+{% block heading %}
+Login
+{% endblock heading %}
+
+{% block urls %}
+<div class="text-center" style="margin-top: 1.5rem;">
+    <a href="{% url 'password_reset'%}" class="login-link">Reset your password</a>
+</div>
+<div class="text-center" style="margin-top: 1.5rem;">
+    <a href="{% url 'customer_signup'%}" class="login-link">Don't have an account? SignUp</a>
+</div>
+<div class="text-center" style="margin-top: 1.5rem;">
+    <a href="{% url 'restaurant_signup'%}" class="login-link">Resisterd your restaurent</a>
+</div>
+{% endblock urls %}
+
+
