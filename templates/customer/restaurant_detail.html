@@ -114,6 +114,23 @@ Restaurant Details
         font-size: 0.9rem;
         color: #555;
     }
+    .btn-primary {
+        background-color: #fc7a1e;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem; 
+        font-size: 1rem;
+        margin: 50px 50px 10px 15px; /* Top, right, bottom, left margins */
+        height: 45px; 
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+    }
+
+    .btn-primary:hover {
+        background-color: #d75c00; 
+    }
 </style>
 {% endblock style %}
 
@@ -124,6 +141,7 @@ Restaurant Details
 <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="{% url 'customer_home'%}">Restaurants</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'view_order'%}">Order</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}">Cart</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
     </ul>
@@ -142,7 +160,7 @@ Restaurant Details
         <div class="restaurant-details">
             <div class="card-title-row">
                 <h4 class="card-title">{{ restaurant.name }}</h4>
-                <span class="card-rating">⭐ {{ avg_rating }}/5</span>
+                <span class="card-rating">⭐ {{  restaurant.avg_rating }}/5</span>
             </div>
             <div class="cuisine-type">{{ restaurant.cuisine_type }}</div>
             <div class="time-info">
