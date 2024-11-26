@@ -4,7 +4,7 @@ from django.contrib import messages
 from Restaurants.models import Restaurant, RestaurantMenu
 from users.models import Customer
 from Reviews.models import Review
-from.models import Cart, CartItem
+from.models import Cart, CartItem, Order, OrderItem
 from decimal import Decimal
 
 
@@ -34,7 +34,7 @@ def restaurant_detail(request, restaurant_id):
 @login_required(login_url='login')
 def add_to_cart(request, dish_id ):
     if hasattr(request.user, 'customer') and request.user.customer.is_customer:
-        # breakpoint()
+
         dish = get_object_or_404(RestaurantMenu, id = dish_id )
         customer = Customer.objects.get(pk=request.user.id)
         #check or create for customer
@@ -56,11 +56,34 @@ def add_to_cart(request, dish_id ):
     else:
         return redirect('login')
 
+# @login_required(login_url='login')
+# def view_cart(request):
+#     if hasattr(request.user, 'customer') and request.user.customer.is_customer:  
+#         customer = request.user.customer 
+        
+#         cart = get_object_or_404(Cart, customer=customer, order=False)
+#         cart_items = CartItem.objects.filter(cart=cart)
+#         return render (request, 'customer/view_cart.html', {'cart': cart, 'cart_items': cart_items})
+#     else:
+#         return redirect('login')
+
+@login_required(login_url='login')
 def view_cart(request):
-    customer = request.user.customer 
-    cart = get_object_or_404(Cart, customer=customer, order=False)
-    cart_items = CartItem.objects.filter(cart=cart)
-    return render (request, 'customer/view_cart.html', {'cart': cart, 'cart_items': cart_items})
+    # Check if the user is a customer
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
+        customer = request.user.customer
+
+        # Get or create the cart for the customer
+        cart, created = Cart.objects.get_or_create(customer=customer, order=False)
+
+        # Get all items in the cart
+        cart_items = CartItem.objects.filter(cart=cart)
+
+        # Render the cart page
+        return render(request, 'customer/view_cart.html', {'cart': cart, 'cart_items': cart_items})
+    else:
+        # Redirect to login if the user is not a customer
+        return redirect('login')
 
 @login_required(login_url='login')    
 def remove_cart_item(request,  item_id):
@@ -121,3 +144,69 @@ def increse_item_quantity(request,  item_id):
         return redirect('view_cart')
     else:
         return redirect('login')
+
+@login_required(login_url='login')  
+def place_order(request, cart_id):
+    # breakpoint()
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
+        if request.method == 'POST' :  
+            cart = get_object_or_404(Cart, id = cart_id, customer = request.user.customer)
+            cart_items = CartItem.objects.filter(cart = cart)
+            
+
+            if not cart_items.exists():
+                    messages.error(request, "Your cart is empty!")
+                    return redirect('view_cart')
+            order = Order.objects.create(
+                    customer=request.user.customer,
+                    delivery_address= request.user.customer.address,
+                    total_price = cart.total_price
+            )
+            order.save()
+            
+            for item in cart_items: 
+                order_item = OrderItem.objects.create(
+                        customer = request.user.customer,
+                        restaurant = item.dish.restaurent,
+                        order  = order,
+                        item = item,
+                        item_price = item.price,
+                        quantity = item.quantity, 
+                        item_name = item.dish.dish_name,       
+                )
+                order_item.item_image = item.dish.dish_image
+                order_item.save()
+
+            cart.order = True
+            cart.save()
+            if cart.order == True:
+                cart_items.delete()
+            messages.success(request, f"Order placed successfull successfully.")
+        return redirect('customer_home', )
+    else:
+        return redirect('login')
+
+@login_required(login_url='login')
+def view_order(request):
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
+        customer = request.user.customer
+        orders = Order.objects.filter(customer=customer) 
+        Order_Item = OrderItem.objects.filter(customer = customer)
+        return render(request, 'customer/view_order.html', {'orders': orders, 'Order_Item':Order_Item})
+    else:
+        return redirect('login')
+    
+from django.shortcuts import get_object_or_404
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
+        order = get_object_or_404(Order, id=order_id)
+        order_items = OrderItem.objects.filter(order=order)
+        return render(request, 'customer/order_detail.html', {'order_items': order_items, 'order': order})
+    else:
+        return redirect('login')
+
+
+
+
