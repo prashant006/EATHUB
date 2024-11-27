@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'users',
     'customer',
     'Restaurants',
-    'SocialApp',
     'Reviews',
 
     # 'django.contrib.sites',  

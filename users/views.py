@@ -136,10 +136,3 @@ def update_pass(request):
 #     else:
 #         return redirect('login')
 
-
-# def reset(request):
-#     subject = 'Prashant'
-#     message = 'hdgfshjhv;skdhfdlkjh'
-#     address = 'nickypatle006@gmail.com'
-#     send_mail(subject,message,settings.EMAIL_HOST_USER,[address])
-#     return redirect('login')

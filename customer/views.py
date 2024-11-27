@@ -6,6 +6,7 @@ from users.models import Customer
 from Reviews.models import Review
 from.models import Cart, CartItem, Order, OrderItem
 from decimal import Decimal
+import stripe
 
 
 
@@ -148,8 +149,7 @@ def increse_item_quantity(request,  item_id):
 @login_required(login_url='login')  
 def place_order(request, cart_id):
     # breakpoint()
-    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
-        if request.method == 'POST' :  
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer: 
             cart = get_object_or_404(Cart, id = cart_id, customer = request.user.customer)
             cart_items = CartItem.objects.filter(cart = cart)
             
@@ -162,6 +162,7 @@ def place_order(request, cart_id):
                     delivery_address= request.user.customer.address,
                     total_price = cart.total_price
             )
+            order.payment_status = 'SUCCESS'
             order.save()
             
             for item in cart_items: 
@@ -182,7 +183,7 @@ def place_order(request, cart_id):
             if cart.order == True:
                 cart_items.delete()
             messages.success(request, f"Order placed successfull successfully.")
-        return redirect('customer_home', )
+            return redirect('customer_home', )
     else:
         return redirect('login')
 
@@ -207,6 +208,49 @@ def order_detail(request, order_id):
     else:
         return redirect('login')
 
+@login_required(login_url='login')
+def cancel_order(request, order_item_id):
+    if hasattr(request.user, 'customer') and request.user.customer.is_customer:
+        order_item = get_object_or_404(OrderItem, id=order_item_id)
+        if order_item.order_status == 'PLACED':
+            order_item.order_status = 'CANCELLED'
+            order_item.save()
+        messages.success(request, f"Cancel item successfully.")
+        return redirect('order_detail',order_id = order_item.order.id)
+    else:
+        return redirect('login')
+    
 
 
+# payment method
+stripe.publishable_key = 'pk_test_51QOIQEATEkbiPlGMwykLADnJq7SiqEN28O5TEr39iRfgK9i47ax8laiZBTZmehSE5aZ1nC894VuelLIAJJovTgrb00G2viL3Ly'
+stripe.api_key = 'sk_test_51QOIQEATEkbiPlGMrF6bMNOZt0Xqa3JLCdPxs7Z3WqeXIh6U68BtKiDkMeGNNkLjCjCJBVYThG97jz84FKsbo2CK00N9q04J8k'
+def checkout_session(request, cart_id):
+    cart = get_object_or_404(Cart, id = cart_id)
+
+    DOMAIN = 'http://127.0.0.1:8000' 
+    success_url = f"{DOMAIN}/place_order/{cart_id}/"
+    cancel_url = f"{DOMAIN}/payment_failed/"
+
+    session = stripe.checkout.Session.create(
+        payment_method_types = ['card'],
+        line_items=[
+            {
+                'price_data' : {
+                    'currency': 'inr', 
+                    'product_data':  {'name': 'order'},
+                    'unit_amount': int(cart.total_price)*100
+                },
+                'quantity': 1
+            },
+        ],
+        mode='payment',
+        success_url = success_url,
+        cancel_url = cancel_url,
+    )
+    return redirect(session.url, code = 303)
+
+def payment_failed(request):
+    messages.warning(request, f"Payment failed.")
+    return redirect('view_cart')
 

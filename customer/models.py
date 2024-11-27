@@ -20,8 +20,8 @@ class CartItem(models.Model):
 class Order(models.Model):
     PAYMENT_STATUS_CHOICES = [
         ('PENDING', 'Pending'),
-        ('PAID', 'Paid'),
-        ('FAILED', 'Failed'),
+        ('SUCCESS', 'Success'),
+        ('REFUNDED', 'Refunded'),
     ]
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)

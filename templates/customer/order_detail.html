@@ -105,7 +105,7 @@ Order Details
         <p><strong>Order Date:</strong> {{ order.order_date|date:"d M Y, h:i A" }}</p>
         <p><strong>Delivery Address:</strong> {{ order.delivery_address }}</p>
         <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
-        <p><strong>Payment Status:</strong> 
+        <p><strong>Payment Status:</strong> {{order.payment_status}}
             {% comment %} <span style="color: {{ 'green' if order.payment_status == 'PAID' else 'red' }};">
                 {{ order.payment_status }}
             </span> {% endcomment %}
@@ -137,7 +137,7 @@ Order Details
 
                 <div class="col-2">
                     {% if item.order_status == 'PLACED' %}
-                        <a href="" class="cancel-button">Cancel Order</a>
+                        <a href="{% url 'cancel_order' item.id %}" class="cancel-button">Cancel Order</a>
                     {% elif item.order_status == 'CANCELLED' %}
                         <button class="cancel-button disabled" disabled>Cancelled</button>
                     {% else %}
