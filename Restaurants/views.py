@@ -4,6 +4,7 @@ from .forms import AddDishForm, AddRestaurantForm
 from .models import Restaurant,RestaurantMenu
 from customer.models import Order, OrderItem
 from django.contrib import messages
+from django.core.mail import send_mail
 # Create your views here.
 
 @login_required(login_url='login')
@@ -168,6 +169,10 @@ def order_cancel(request, order_item_id):
         if order_item.order_status == 'PLACED':
             order_item.order_status = 'CANCELLED'
             order_item.save()
+            
+            subject = f"Order status"
+            message = f"Dear {order_item.customer} your order has {order_item.order_status} and your refund of {order_item.item_price} has been initiate to your account \n Thank you team EATHUB"
+            send_mail(subject, message, 'nickypatle006@gmail.com', {order_item.customer.email})
         return redirect('view_order', restaurant_id= order_item.restaurant.id)
     else:
         return redirect('login')

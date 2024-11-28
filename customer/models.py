@@ -29,6 +29,8 @@ class Order(models.Model):
     delivery_address = models.TextField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
+    payment_intent_id = models.CharField(max_length=250, blank=True, null=True)
+    order_receipt = models.FileField(upload_to='order_recipt_pdf/', blank=True, null=True)
     
 class OrderItem(models.Model):
     ORDER_STATUS_CHOICES = [
