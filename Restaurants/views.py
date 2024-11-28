@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import AddDishForm, AddRestaurantForm
 from .models import Restaurant,RestaurantMenu
+from customer.models import Order, OrderItem
 from django.contrib import messages
+from django.core.mail import send_mail
 # Create your views here.
 
 @login_required(login_url='login')
@@ -127,3 +129,50 @@ def update_dish_info(request, dish_id, restaurant_id):
     else:
         return redirect ('login')
 
+
+@login_required(login_url='login')
+def view_order(request, restaurant_id):
+    if hasattr(request.user, 'restaurantowner') and request.user.restaurantowner.is_restaurent:
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        order_item = OrderItem.objects.filter(restaurant = restaurant)
+        return render(request, 'restaurant/view_order.html', {'restaurant':restaurant, 'order_item':order_item})
+    else:
+        return redirect('login')
+
+
+@login_required(login_url='login')
+def order_accept(request, order_item_id):
+    if hasattr(request.user, 'restaurantowner') and request.user.restaurantowner.is_restaurent:
+        order_item = get_object_or_404(OrderItem, id=order_item_id)
+        if order_item.order_status == 'PLACED':
+            order_item.order_status = 'ACCEPT'
+            order_item.save()
+        return redirect('view_order', restaurant_id= order_item.restaurant.id)
+    else:
+        return redirect('login')
+    
+@login_required(login_url='login')
+def order_ready(request, order_item_id):
+    if hasattr(request.user, 'restaurantowner') and request.user.restaurantowner.is_restaurent:
+        order_item = get_object_or_404(OrderItem, id=order_item_id)
+        if order_item.order_status == 'ACCEPT':
+            order_item.order_status = 'ON_THE_WAY'
+            order_item.save()
+        return redirect('view_order', restaurant_id= order_item.restaurant.id)
+    else:
+        return redirect('login')
+    
+@login_required(login_url='login')
+def order_cancel(request, order_item_id):
+    if hasattr(request.user, 'restaurantowner') and request.user.restaurantowner.is_restaurent:
+        order_item = get_object_or_404(OrderItem, id=order_item_id)
+        if order_item.order_status == 'PLACED':
+            order_item.order_status = 'CANCELLED'
+            order_item.save()
+            
+            subject = f"Order status"
+            message = f"Dear {order_item.customer} your order has {order_item.order_status} and your refund of {order_item.item_price} has been initiate to your account \n Thank you team EATHUB"
+            send_mail(subject, message, 'nickypatle006@gmail.com', {order_item.customer.email})
+        return redirect('view_order', restaurant_id= order_item.restaurant.id)
+    else:
+        return redirect('login')

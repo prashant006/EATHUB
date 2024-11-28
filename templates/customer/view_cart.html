@@ -142,6 +142,10 @@ Cart
         color: white;
         text-decoration: none;
     }
+    .empty-card{
+        font-size: 25px;
+        color: #333;
+    }
 </style>
 {% endblock style %}
 
@@ -152,6 +156,7 @@ Cart
 <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="{% url 'customer_home'%}">Restaurants</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'view_order'%}">Order</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
     </ul>
 </div>
@@ -159,8 +164,9 @@ Cart
 
 {% block content %}
 <div class="cart-container">
-    <h1 class="cart-header">Hey {{ cart.customer }}, complete your order and enjoy your meal!</h1>
+    
     {% if cart_items %}
+        <h1 class="cart-header">Hey {{ cart.customer }}, complete your order and enjoy your meal!</h1>
         {% for item in cart_items %}
         <div class="cart-item">
 
@@ -194,13 +200,18 @@ Cart
         {% endfor %}
         <p><a href="{% url 'customer_home' %}" >Add more dish</a></p>
 
-
+        
         <div class="total-section">
             <h3>Total Price: ₹{{ cart.total_price }}</h3>
-            <a href="" class="place-order">Place Order</a>
+            
+            <form action="{% url 'checkout_session' cart.id %}" class="place-order" method="post">
+            {% csrf_token %}
+                <button type="submit">Place order</button>
+            </form>
         </div>
+        
     {% else %}
-        <p>Your cart is empty. <a href="{% url 'customer_home' %}" style="color: #007bff;">Browse Menu</a></p>
+        <p class='empty-card'>Your cart is empty. <a href="{% url 'customer_home' %}" style="color: #007bff;">Browse Restaurants</a></p>
     {% endif %}
 </div>
 {% endblock content %}

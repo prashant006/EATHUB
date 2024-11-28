@@ -1,0 +1,136 @@
+{% extends "base_home.html" %}
+
+{% block title %}
+Your Orders
+{% endblock title %}
+
+{% block style %}
+<style>
+    .order-container {
+        margin-top: 50px;
+    }
+
+
+    .card {
+        border: 1px solid #f1f1f1;
+        border-radius: 8px;
+        padding: 15px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+   
+    .order-details {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .order-id {
+        font-weight: bold;
+        color: #333; 
+    }
+
+    .order-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    .order-date-status {
+        font-size: 12px;
+        text-align: right;
+        color: #666;
+    }
+
+    .payment-status {
+        font-size: 18px; 
+        font-weight: bold;
+        color: #28a745;
+    }
+
+    .payment-status.failed {
+        color: #dc3545;
+    }
+
+    .no-orders {
+        font-size: 18px;
+        color: #999;
+        text-align: center;
+        margin-top: 50px;
+    }
+
+
+    .order-link {
+        text-decoration: none;
+    }
+
+    .order-link:hover {
+        text-decoration: none; 
+    }
+</style>
+{% endblock style %}
+
+{% block navbar_item %}
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'customer_home' %}">Restaurants</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+</div>
+{% endblock navbar_item %}
+
+{% block content %}
+<div class="container order-container">
+    <h2 class="text-center mb-4">Your Orders</h2>
+
+    {% if orders %}
+        <div class="row">
+            {% for order in orders %}
+            <div class="col-12 mb-4">
+                <a href="{% url 'order_detail' order.id %}" class="order-link">
+                    <div class="card shadow-sm">
+                        <div class="row align-items-center">
+
+                            <div class="col-md-5 order-details">
+                                <p class="order-id">Order ID: {{ order.id }}</p>
+                                <p><strong>Address:</strong> {{ order.delivery_address }}</p>
+                                <p><strong>Items:</strong>
+                                    {% for item in order.order_items.all %}
+                                        {{ item.item_name }} (x{{ item.quantity }}){% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+
+                            <div class="col-md-3 text-center">
+                                <p class="order-price">₹{{ order.total_price }}</p>
+                            </div>
+
+                            <div class="col-md-4 text-right">
+                                <p class="order-date-status"><strong>Date:</strong> {{ order.order_date|date:"d M Y, h:i A" }}</p>
+                                <p class="order-date-status">
+                                    <strong>Payment:</strong>
+                                    <span class="payment-status {% if order.payment_status == 'Failed' %}failed{% endif %}">
+                                        {{ order.payment_status }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-orders">You have no orders.</p>
+    {% endif %}
+</div>
+{% endblock content %}

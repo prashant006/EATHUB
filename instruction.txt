@@ -1,0 +1,8 @@
+#for sending mail
+
+from django.core.mail import send_mail, EmailMessage
+from django.core.files.base import ContentFile
+from django.template.loader import render_to_string
+from weasyprint import HTML
+
+ pip install weasyprint
